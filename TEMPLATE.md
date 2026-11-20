@@ -17,7 +17,7 @@
 - **Server, not only a CLI/SDK.** The engine is a long-running server (`./engine ./ai/eaas.py`, uvicorn on 5565): WebSocket API for the VS Code extension, SDKs and CLI, an MCP server at `/mcp`, webhook and chat endpoints of running pipelines, `/version` as the public health endpoint. Upstream publishes `ghcr.io/rocketride-org/rocketride-engine` per release (amd64, 456 MB compressed).
 - **Auth.** With `ROCKETRIDE_APIKEY` set, every client and MCP call needs it; without it the engine accepts any key. The template always sets one (fail closed).
 - **No Docker needed.** Each pipeline runs as a child process of the engine. The Kubernetes node image (`rocketride-node`) is for the Helm chart only.
-- **GPU.** Local-model nodes depend on `torch==2.10.0+cu128`. The first test filled a 5 GB volume with NVIDIA wheels. The template adds a requirements file with PyTorch's CPU index and an overrides file (`torch==2.10.0+cpu`, `torchvision==0.25.0+cpu`), both picked up by the engine's own `depends.py` globs.
+- **GPU.** Local-model nodes depend on `torch==2.10.0+cu128`. The first test filled a 5 GB volume with NVIDIA wheels. The template adds a requirements file with PyTorch's CPU index and an overrides file (`torch==2.10.0+cpu`, `torchvision==0.25.0+cpu`), both picked up by the engine's own `depends.py` globs. The Dockerfile runs `ensure_constraints()` at build (as upstream's node image does) so the engine does not recompile constraints against PyPI at every start.
 
 ## Market templates
 
