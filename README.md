@@ -1,5 +1,7 @@
 # Deploy and Host RocketRide with Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/rocketride-3-ai-pipeline-engine?referralCode=20H68q)
+
 RocketRide is an open-source AI pipeline engine with a C++ runtime: you build pipelines of LLMs, agents, parsers, vector stores and tools in VS Code or with its SDKs, and run them on the engine. This community template runs your own RocketRide 3 engine behind an API key, with a Qdrant vector database next to it.
 
 ## About Hosting RocketRide
