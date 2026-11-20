@@ -48,7 +48,7 @@ The RocketRide engine is a server on port 5565. Clients connect over a WebSocket
 
 **Safe defaults.** `ROCKETRIDE_APIKEY` is generated (`rr_` plus 40 characters). If it is empty or not `rr_` followed by 16 to 200 letters, digits, `_` or `-`, the engine starts with a random key nobody knows and the log says how to fix it; the deploy still succeeds. `RR_PARAM_TOKEN_SECRET` encrypts the secure parameters saved in pipelines; keep it.
 
-**Resources.** Measured on Railway: the engine idles at about 0.15 GB and Qdrant at about 0.05 GB. A running pipeline is a separate process; local-model nodes need 1 GB or more while they work. Use the Hobby plan or higher for local models.
+**Resources.** Measured on Railway: Qdrant idles at about 0.05 GB. The engine used 1.8 GB and 1.5 vCPU while a pipeline with a local embedding model ran (the task process loads PyTorch and the model); see the template's TEMPLATE.md for idle figures. A running pipeline is a separate process, so plan memory per concurrent local-model pipeline. Use the Hobby plan or higher; Trial's 1 GB per service is too small for local models.
 
 **Upgrades.** Change the engine digest in `services/engine/Dockerfile` (keep the PyTorch versions in the override files equal to the ones in the new engine's `ai/common/torch/requirements.txt`) and the Qdrant tag in the template.
 
