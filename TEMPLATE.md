@@ -1,10 +1,10 @@
-# RocketRide 3.6 AI Pipeline Engine: Railway template spec
+# RocketRide 3 AI Pipeline Engine: Railway template spec
 
 ## Listing
 
 | Field | Value |
 |---|---|
-| Name | **RocketRide 3.6 AI Pipeline Engine** |
+| Name | **RocketRide 3 AI Pipeline Engine** |
 | Description | Self-hosted RocketRide engine for AI pipelines, webhooks and MCP, key-gated (75 chars) |
 | Category | AI/ML |
 | Tags | rocketride, ai-pipelines, rag, agents, mcp, llm, qdrant, vscode |
