@@ -1,0 +1,52 @@
+{
+  "name": "RocketRide 3.6 AI Pipeline Engine",
+  "description": "Self-hosted RocketRide engine for AI pipelines, webhooks and MCP, key-gated",
+  "category": "AI/ML",
+  "tags": ["rocketride", "ai-pipelines", "rag", "agents", "mcp", "llm", "qdrant", "vscode"],
+  "image": "https://cdn.jsdelivr.net/gh/rocketride-org/rocketride-server@ba6b8ef6b81aa11ca4751a0af23490469df491b8/docs/docusaurus/static/img/rocketride-icon-colored.svg",
+  "upstream": {
+    "rocketride": "rocketride-org/rocketride-server (MIT) server-v3.6.0 (2026-11-04); image ghcr.io/rocketride-org/rocketride-engine:3.6.0",
+    "qdrant": "qdrant/qdrant:v1.20.2 (Apache-2.0)",
+    "checked": "2026-11-20"
+  },
+  "services": {
+    "RocketRide": {
+      "icon": "https://cdn.jsdelivr.net/gh/rocketride-org/rocketride-server@ba6b8ef6b81aa11ca4751a0af23490469df491b8/docs/docusaurus/static/img/rocketride-icon-colored.svg",
+      "source": {"repo": "baranberkay96/rocketride-railway", "rootDirectory": "/services/engine"},
+      "startCommand": null,
+      "healthcheckPath": "/version",
+      "healthcheckTimeout": 600,
+      "restartPolicyType": "ALWAYS",
+      "publicDomain": true,
+      "targetPort": 5565,
+      "tcpProxy": null,
+      "volume": {"mountPath": "/opt/data"},
+      "variables": {
+        "PORT": {"defaultValue": "5565", "description": "Engine port: WebSocket API, /mcp, webhook and chat endpoints (public domain and healthcheck).", "required": true},
+        "ROCKETRIDE_APIKEY": {"defaultValue": "rr_${{secret(40)}}", "description": "API key every client sends (SDK, CLI, VS Code, MCP Bearer, webhooks). Generated; rr_ + 16-200 chars or the engine stays locked.", "required": true},
+        "RR_PARAM_TOKEN_SECRET": {"defaultValue": "${{secret(48)}}", "description": "Key that encrypts the secure parameters saved in pipelines. Generated; keep it, or saved secrets must be entered again.", "required": true},
+        "ROCKETRIDE_QDRANT_HOST": {"defaultValue": "${{Qdrant.RAILWAY_PRIVATE_DOMAIN}}", "description": "Qdrant on the private network, for pipelines (the ROCKETRIDE_QDRANT_HOST reference, port 6333).", "required": false},
+        "ROCKETRIDE_COLLECTION_NAME": {"defaultValue": "rocketride", "description": "Default Qdrant collection for pipelines (the ROCKETRIDE_COLLECTION_NAME reference).", "required": false},
+        "ROCKETRIDE_LOG_LEVEL": {"defaultValue": "info", "description": "Engine log level (debug, info, warning, error).", "required": false}
+      }
+    },
+    "Qdrant": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/qdrant.svg",
+      "source": {"image": "qdrant/qdrant:v1.20.2@sha256:d277592721d2e3b73f9b797b53cf05e6a5bb2134f6d13fdbda4ca51782afbcac"},
+      "startCommand": null,
+      "healthcheckPath": "/readyz",
+      "healthcheckTimeout": 300,
+      "restartPolicyType": "ALWAYS",
+      "publicDomain": false,
+      "targetPort": null,
+      "tcpProxy": null,
+      "volume": {"mountPath": "/qdrant/storage"},
+      "variables": {
+        "PORT": {"defaultValue": "6333", "description": "Qdrant REST port (healthcheck); private network only.", "required": true},
+        "QDRANT__SERVICE__HOST": {"defaultValue": "::", "description": "Listen on IPv4 and IPv6 (Railway private network).", "required": true},
+        "QDRANT__STORAGE__STORAGE_PATH": {"defaultValue": "/qdrant/storage", "description": "Collections, on the volume.", "required": true},
+        "QDRANT__TELEMETRY_DISABLED": {"defaultValue": "true", "description": "Do not send anonymous usage statistics to Qdrant.", "required": false}
+      }
+    }
+  }
+}
