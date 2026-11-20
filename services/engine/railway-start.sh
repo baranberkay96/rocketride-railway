@@ -6,9 +6,8 @@ random_key() { echo "rr_$(head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n')";
 
 # Task data (/opt/data) is the Railway volume; a fresh one belongs to root, the engine runs as uid 1000.
 data=/opt/data
-mkdir -p "$data" "$data/cache/uv"
+mkdir -p "$data"
 [ "$(stat -c %u "$data")" = 1000 ] || chown 1000:1000 "$data"
-[ "$(stat -c %u "$data/cache")" = 1000 ] || chown -R 1000:1000 "$data/cache"
 
 # Without a key the engine accepts any non-empty one, so it must never start without a valid one here.
 # MCP clients also need the rr_ prefix. A bad value locks the engine with a random key instead of
@@ -30,8 +29,10 @@ esac
 export PORT="$port"
 # Engine image 3.6.0 and earlier send MCP tool calls to RocketRide Cloud unless this points at the engine.
 export ROCKETRIDE_URI="${ROCKETRIDE_URI:-ws://127.0.0.1:${port}}"
-# Wheels the pipeline nodes install come from a cache on the volume after a redeploy.
-export UV_CACHE_DIR="${UV_CACHE_DIR:-$data/cache/uv}"
+# PyTorch's CPU index for the overrides in /opt/rocketride/ai/railway, also in the tasks' environment.
+export UV_EXTRA_INDEX_URL="${UV_EXTRA_INDEX_URL:-https://download.pytorch.org/whl/cpu}"
+export UV_LINK_MODE="${UV_LINK_MODE:-copy}"
+export RR_SUBPROCESS_ENV="${RR_SUBPROCESS_ENV:-UV_*}"
 
 cd /opt/rocketride
 exec setpriv --reuid=1000 --regid=1000 --init-groups --inh-caps=-all \
